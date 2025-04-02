@@ -1,4 +1,4 @@
-(function() {
+function createChatContainer() {
     // TODO: might create several functions
 
     fetch("https://cdn.jsdelivr.net/gh/Kernware/web_ui@main/src/web_bot.css")
@@ -171,4 +171,4 @@
             console.error('Chatbot error:', error);
         }
     }
-})();
+}
