@@ -1,7 +1,15 @@
-function createChatContainer() {
-    // TODO: might create several functions
 
-    fetch("https://github.com/Kernware/notebooks/blob/main/src/web_bot.css")
+function createChatContainer() {
+
+    let session_token = localStorage.getItem('session_token');
+    if (!session_token) {
+        session_token = crypto.randomUUID();
+        localStorage.setItem('session_token', session_token);
+    }
+    let starters_shown = false;
+    let question_history = [];
+
+    fetch("https://cdn.jsdelivr.net/gh/Kernware/web_ui@main/src/web_bot.css")
     .then(response => response.text())
     .then(css => {
         const style = document.createElement("style");
@@ -18,18 +26,24 @@ function createChatContainer() {
     chatContainer.appendChild(resizeHandleLeft);
 
     const resizeHandleTop = document.createElement('div');
-    resizeHandleTop.id = 'kw-resize-handle-right';
+    resizeHandleTop.id = 'kw-resize-handle-top';
     chatContainer.appendChild(resizeHandleTop);
 
     const header = document.createElement('div');
     header.id = 'kw-header';
-    header.innerHTML = '<span>Kernware Assistent</span>';
+    header.innerHTML = `
+        <span class="kw-header-text" data-tooltip="Einfacher Assistent basierend auf llama3.2 3B Model,&#10;beantwortet nur Fragen spezifisch zu Kernware.&#10;Have fun :)">
+            Kernware Assistent
+        </span>
+    `;
 
     header.addEventListener('click', () => {
         if (isMinimized) {
             chatContainer.style.height = '400px';
             messagesDiv.style.display = 'block';
-            startersDiv.style.display = 'block';
+            if (!starters_shown) {
+                startersDiv.style.display = 'block';
+            }
             inputDiv.style.display = 'flex';
 
             resizeHandleLeft.style.display = 'flex';
@@ -58,8 +72,8 @@ function createChatContainer() {
 
     // TODO: load from backend
     const starters = [
-        "Was macht Kernware?",
-        "Kernware Assistent?"
+        "Was ist Kernware?",
+        "Was macht Kernware besonders?"
     ];
     starters.forEach(query => {
         const btn = document.createElement('button');
@@ -68,6 +82,7 @@ function createChatContainer() {
         btn.addEventListener('click', () => sendMessage(query));
         startersDiv.appendChild(btn);
     });
+
 
     const inputDiv = document.createElement('div');
     inputDiv.id = 'kw-input-divs';
@@ -146,8 +161,9 @@ function createChatContainer() {
             padding: 8px;
             border-radius: 5px;
             max-width: 80%;
-            ${isUser ? 
-                'background: #9bcf9b; color: white; margin-left: auto;' : 
+            user-select: text;
+            ${isUser ?
+                'background: #9bcf9b; color: white; margin-left: auto;' :
                 'background: #e9ecef; color: black;'}
         `;
         messagesDiv.appendChild(msgDiv);
@@ -155,20 +171,37 @@ function createChatContainer() {
     }
 
     async function sendMessage(message) {
+        starters_shown = true;
         if (!message.trim()) return;
-        
+
         addMessage(message, true);
         input.value = '';
         startersDiv.style.display = 'none';
 
-        // TODO: add real backend and 
+        const spinner = document.createElement('div');
+        spinner.classList.add('spinner');
+        messagesDiv.appendChild(spinner);
+
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const mockResponse = `You said: "${message}". (This is a demo response)`;
-            addMessage(mockResponse);
-        } catch (error) {
-            addMessage('Sorry, something went wrong!');
+            // simple CORS request to avoid preflight requests
+            const backendUrl = `http://10.13.37.64:10103/chat?query=${encodeURIComponent(message)}&history=${encodeURIComponent(JSON.stringify(question_history))}&token=${encodeURIComponent(session_token)}`;
+            const response = await fetch(backendUrl);
+            if (!response.ok) {
+                throw new Error('Backend error');
+            }
+
+            const data = await response.json();
+            const backendResponse = data.response || 'Backend müde...';
+
+            question_history.push([message, backendResponse]);
+            addMessage(backendResponse);
+        }
+        catch (error) {
+            addMessage('Backend müde, backend schlafen... Zzz');
             console.error('Chatbot error:', error);
+        }
+        finally {
+            spinner.remove();
         }
     }
 }

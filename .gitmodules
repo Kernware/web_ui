@@ -1,0 +1,9 @@
+[submodule "src/backend/src/datasets"]
+	path = src/backend/src/datasets
+	url = git@github.com:Kernware/web_ui_datasets.git/
+[submodule "src/backend/webbot_datasets"]
+	path = src/backend/webbot_datasets
+	url = git@github.com:Kernware/web_ui_datasets.git/
+[submodule "src/backend/src/webbot_datasets"]
+	path = src/backend/src/webbot_datasets
+	url = git@github.com:Kernware/web_ui_datasets.git/

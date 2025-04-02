@@ -1,0 +1,5 @@
+src/backend/.docker_env
+
+src/backend/src/custom_logger/__pycache__/
+src/backend/src/unsloth_models/__pycache__/
+src/backend/unsloth_compiled_cache/

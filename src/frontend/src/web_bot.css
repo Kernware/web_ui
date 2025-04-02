@@ -18,27 +18,28 @@
 }
 
 #kw-resize-handle-left,
-#kw-resize-handle-right {
+#kw-resize-handle-top {
     position: absolute;
     background: #9bcf9b;
-    border-radius: 5px;
     display: none;
 }
 
 #kw-resize-handle-left {
-    left: 0;
-    top: 0;
+    top: -5px;
+    bottom: 5px;
     width: 5px;
-    height: 100%;
+    height: 101%;
     cursor: ew-resize;
+    border-radius: 5px 0px 0px 5px;
 }
 
-#kw-resize-handle-right {
+#kw-resize-handle-top {
     top: -5px;
     left: 0;
     width: 100%;
     height: 5px;
     cursor: ns-resize;
+    border-radius: 5px 5px 0px 0px;
 }
 
 #kw-header {
@@ -54,6 +55,7 @@
 
 #kw-chat-messages {
     flex: 1;
+    font-size: small;
     padding: 10px;
     overflow-y: auto;
     background: #f9f9f9;
@@ -107,4 +109,44 @@
     padding: 8px;
     border-radius: 5px;
     max-width: 80%;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3; /* Light gray */
+    border-top: 4px solid #11421f; /* Blue color */
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 2s linear infinite;
+    top: 10%;
+    left: 10%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.kw-header-text {
+    position: relative;
+}
+
+.kw-header-text[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: pre-line;
+    z-index: 1000;
+    margin-bottom: 15px;  /* Added some spacing between tooltip and text */
+    max-width: 400px;
+    width: 300px;
+    text-align: left;
 }

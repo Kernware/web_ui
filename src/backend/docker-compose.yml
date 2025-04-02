@@ -1,0 +1,39 @@
+services:
+  python_backend:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - .docker_env
+    ports:
+      - 10103:10103
+    environment:
+      - TZ=Europe/Berlin
+      - STORAGE_DIR=/app/shared_storage
+    volumes:
+      - /mnt/storage/Data/DevelopDockers/UnslothDockerSpace:/app/shared_storage
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  postgres_webbot:
+    image: postgres:17.4
+    container_name: postgres_webbot
+    env_file:
+      - .docker_env
+    ports:
+      - 10432:5432
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - webbot-postgres-data:/var/lib/postgresql/data
+      - ./src/postgres/initdb:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+
+volumes:
+  webbot-postgres-data:

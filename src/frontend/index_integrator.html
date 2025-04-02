@@ -38,8 +38,8 @@
 </head>
 <body>
     <header>
-        <h1>Welcome to Our Website</h1>
-        <p>Your friendly chatbot is here to help!</p>
+        <h1>Debug HTML Website</h1>
+        <p></p>
     </header>
 
     <div class="container">
@@ -59,26 +59,10 @@
         </section>
     </div>
 
-    <footer>
-        <p>© 2025 Sample Website. All rights reserved.</p>
-    </footer>
-
 </body>
 
-<script>
-    (function () {
-        const script = document.createElement('script');
-        script.src = 'https://raw.githubusercontent.com/Kernware/notebooks/main/src/web_bot.js';
-        script.onerror = (error) => {
-            console.error('Error loading web_bot.js:', error);
-        };
-        script.onload = () => {
-            if (typeof initWebBot === 'function') {
-                initWebBot();
-            }
-        };
-        document.head.appendChild(script);
-    })();
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Kernware/web_ui@main/src/web_bot.css"></style>
+<script src="https://cdn.jsdelivr.net/gh/Kernware/web_ui@main/src/web_bot.js" onload="createChatContainer()">
 </script>
 
 </html>
