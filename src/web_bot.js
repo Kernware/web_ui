@@ -1,7 +1,7 @@
 function createChatContainer() {
     // TODO: might create several functions
 
-    fetch("https://github.com/Kernware/notebooks/blob/main/src/web_bot.css")
+    fetch("https://cdn.jsdelivr.net/gh/Kernware/web_ui@main/src/web_bot.css")
     .then(response => response.text())
     .then(css => {
         const style = document.createElement("style");
