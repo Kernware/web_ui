@@ -18,7 +18,7 @@ function createChatContainer() {
     chatContainer.appendChild(resizeHandleLeft);
 
     const resizeHandleTop = document.createElement('div');
-    resizeHandleTop.id = 'kw-resize-handle-right';
+    resizeHandleTop.id = 'kw-resize-handle-top';
     chatContainer.appendChild(resizeHandleTop);
 
     const header = document.createElement('div');
@@ -146,6 +146,7 @@ function createChatContainer() {
             padding: 8px;
             border-radius: 5px;
             max-width: 80%;
+            user-select: text;
             ${isUser ? 
                 'background: #9bcf9b; color: white; margin-left: auto;' : 
                 'background: #e9ecef; color: black;'}
@@ -161,14 +162,28 @@ function createChatContainer() {
         input.value = '';
         startersDiv.style.display = 'none';
 
-        // TODO: add real backend and 
+        const spinner = document.createElement('div');
+        spinner.classList.add('spinner');
+        messagesDiv.appendChild(spinner);
+
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const mockResponse = `You said: "${message}". (This is a demo response)`;
-            addMessage(mockResponse);
-        } catch (error) {
+            const backendUrl = `http://10.13.37.64:8000/chat?query=${encodeURIComponent(message)}`;
+            const response = await fetch(backendUrl);
+            if (!response.ok) {
+                throw new Error('Backend error');
+            }
+            
+            const data = await response.json();        
+            const backendResponse = data.response || 'No response from backend';
+            addMessage(backendResponse);
+        }
+        catch (error) {
+            // TODO
             addMessage('Sorry, something went wrong!');
             console.error('Chatbot error:', error);
+        }
+        finally {
+            spinner.remove();
         }
     }
 }
